@@ -102,30 +102,34 @@ replicateSources.doLast {
 			}
 
 			def replicationProjectName = replicationProjects.find{ it.name == canonicalProject.name }
-			File replicateProject = file(replicationProjectName)
+			
+			if (replicationProjectName != null && replicationProjectName.length() > 0)
+			{
+                File replicationProject = file(replicationProjectName)
+                
+                if ((canonicalSource == "gradle" || canonicalSource == "liferay-workspace") && (replicationProjectName == "gradle" || replicationProjectName == "liferay-workspace")) {
+                    ant.copy(todir: replicationProject) {
+                        fileset(dir: canonicalProject, includes: "bnd.bnd", "build.gradle")
+                    }
+                }
 
-			if ((canonicalSource == "gradle" || canonicalSource == "liferay-workspace") && (replicationProjectName == "gradle" || replicationProjectName == "liferay-workspace")) {
-				ant.copy(todir: replicationProject) {
-					fileset(dir: canonicalProject, includes: "bnd.bnd", "build.gradle")
-				}
-			}
+                ant.copy(todir: replicationProject) {
+                    fileset(dir: canonicalProject, includes: "*.markdown")
+                }
 
-			ant.copy(todir: replicationProject) {
-				fileset(dir: canonicalProject, includes: "*.markdown")
-			}
+                def replicationSrc = new File( replicationProject, 'src/' )
 
-			def replicationSrc = new File( replicationProject, 'src/' )
+                replicationSrc.listFiles().each { dir ->
+                    if (!dir.name.startsWith("test")) {
+                        dir.deleteDir()
+                    }
+                }
 
-			replicationSrc.listFiles().each { dir ->
-				if (!dir.name.startsWith("test")) {
-					dir.deleteDir()
-				}
-			}
+                def canonicalSrc = new File( canonicalProject, 'src/' )
 
-			def canonicalSrc = new File( canonicalProject, 'src/' )
-
-			ant.copy(todir: replicationSrc) {
-				fileset(dir: canonicalSrc, includes: "**", excludes: "**/test**/")
+                ant.copy(todir: replicationSrc) {
+                    fileset(dir: canonicalSrc, includes: "**", excludes: "**/test**/")
+                }
 			}
 		}
 	}

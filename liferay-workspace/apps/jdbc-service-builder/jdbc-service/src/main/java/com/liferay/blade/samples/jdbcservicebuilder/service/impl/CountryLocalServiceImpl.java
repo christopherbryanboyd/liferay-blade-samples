@@ -1,22 +1,18 @@
 /**
- * Copyright 2000-present Liferay, Inc.
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
  */
 
 package com.liferay.blade.samples.jdbcservicebuilder.service.impl;
-
-import com.liferay.blade.samples.jdbcservicebuilder.service.base.CountryLocalServiceBaseImpl;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -27,6 +23,8 @@ import javax.sql.DataSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.liferay.blade.samples.jdbcservicebuilder.service.base.CountryLocalServiceBaseImpl;
 
 /**
  * The implementation of the country local service.
@@ -43,35 +41,27 @@ import org.slf4j.LoggerFactory;
  * @see com.liferay.blade.samples.jdbcservicebuilder.service.CountryLocalServiceUtil
  */
 public class CountryLocalServiceImpl extends CountryLocalServiceBaseImpl {
-
-	/**
+	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
 	 * Never reference this class directly. Always use {@link com.liferay.blade.samples.jdbcservicebuilder.service.CountryLocalServiceUtil} to access the country local service.
 	 */
-
+	
 	public void useJDBC() {
 		try {
 			DataSource datasource = countryPersistence.getDataSource();
-
 			Connection connection = datasource.getConnection();
-
 			Statement statement = connection.createStatement();
-
-			ResultSet resultSet = statement.executeQuery(
-				"select id, name from country");
+			ResultSet resultSet = statement.executeQuery("select id, name from country");
 
 			while (resultSet.next()) {
 				_logger.info("Record from external database:");
 				String id = resultSet.getString("id");
-
 				_logger.info("ID: " + id);
-
 				String name = resultSet.getString("name");
-
 				_logger.info("Name: " + name + System.lineSeparator());
 			}
-
+			
 			connection.close();
 		}
 		catch (SQLException sqle) {
@@ -80,7 +70,7 @@ public class CountryLocalServiceImpl extends CountryLocalServiceBaseImpl {
 			sqle.printStackTrace();
 		}
 	}
-
-	private Logger _logger = LoggerFactory.getLogger(getClass().getName());
-
+	
+	private Logger _logger = LoggerFactory.getLogger(this.getClass().getName());
+	
 }
