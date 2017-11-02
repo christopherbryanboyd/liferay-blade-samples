@@ -14,7 +14,7 @@ import net.diibadaaba.zipdiff.Differences
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry
 import groovy.io.FileType
 
-FileTree gradleBundles = fileTree(dir: 'gradle', include: '**/libs/*.jar', exclude: '**/npm/**/libs/*.jar')
+FileTree gradleBundles = fileTree(dir: 'gradle', include: '**/libs/*.jar', excludes: ['**/npm/**/libs/*.jar','**/kotlin-portlet/build/libs/*.jar'])
 FileTree liferayWorkspaceBundles = fileTree(dir: 'liferay-workspace', include: '**/libs/*.jar', exclude: 'tests/*')
 FileTree mavenBundles = fileTree(dir: 'maven', include: '**/target/*.jar')
 
@@ -23,7 +23,16 @@ int canonicalBundlesSize = gradleBundles.size()
 task bundlesSizeTest
 
 bundlesSizeTest.doLast {
+	if (canonicalBundlesSize != liferayWorkspaceBundles.size()) {
+		println gradleBundles.files
+		println liferayWorkspaceBundles.files
+	}
 	assert canonicalBundlesSize == liferayWorkspaceBundles.size()
+
+	if (canonicalBundlesSize != mavenBundles.size()) {
+		println gradleBundles.files
+		println mavenBundles.files
+	}
 	assert canonicalBundlesSize == mavenBundles.size()
 }
 
